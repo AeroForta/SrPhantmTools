@@ -58,11 +58,5 @@ namespace SrPhantm {
                 }
             }
         }
-
-        private static GameObject[] GetRootGOs() {
-            Scene scene = SceneManager.GetActiveScene();
-            GameObject[] objs = scene.GetRootGameObjects();
-            return objs;
-        }
     }
 }
