@@ -7,7 +7,7 @@ using Pixelfactor.IP.Engine;
 using Pixelfactor.IP.Engine.Factions;
 
 namespace SrPhantm {
-    [BepInPlugin("com.srphantm.IP.tools", "SrPhantm's IP tools", "1.0.0.0")]
+    [BepInPlugin("com.srphantm.IP.tools", "SrPhantm's IP tools", "1.0.1.0")]
 
     public class Tools : BaseUnityPlugin {
         private ConfigEntry<bool> configAutorun; 
@@ -34,38 +34,27 @@ namespace SrPhantm {
             Logger.LogInfo("Updated names");
         }
 
-        public static void NameAllFactionGOs() {
-            GameObject[] objs = GetRootGOs();
-            foreach (GameObject obj in objs) {
-                var factions = obj.GetComponents<Faction>();
-                foreach (Faction f in factions) {
-                    obj.name = f.GetLongNameElseShort();
-                }
+        public void NameAllFactionGOs() {
+            Faction[] factions = GameObject.FindObjectsOfType<Faction>();
+            foreach (Faction f in factions) {
+                f.name = f.GetLongNameElseShort();
             }
         }
 
         public static void NameAllSectorGOs() {
-            GameObject[] objs = GetRootGOs();
-            foreach (GameObject obj in objs) {
-                Sector[] sectors = obj.GetComponents<Sector>();
-                foreach (Sector s in sectors) {
-                    obj.name = s.Name;
-                }
+            Sector[] sectors = GameObject.FindObjectsOfType<Sector>();
+            foreach (Sector s in sectors) {
+                s.name = s.Name;
             }
         }
 
         public static void NameAllUnitGOs() {
-            GameObject[] objs = GetRootGOs();
-            foreach (GameObject obj in objs) {
-                Sector[] sectors = obj.GetComponents<Sector>();
-                foreach (Sector s in sectors) {
-                    foreach (Transform child in s.transform) {
-                        GameObject gObj = child.gameObject;
-                        Unit[] units = gObj.GetComponents<Unit>();
-                        foreach (Unit u in units) {
-                            u.AutoNameGameObject();
-                        }
-                    }
+            Unit[] units = GameObject.FindObjectsOfType<Unit>();
+            foreach (Unit u in units) {
+                u.AutoNameGameObject();
+                UnitComponentHolder uch = u.GetComponent<UnitComponentHolder>();
+                if (uch != null) {
+                    u.name = u.name + " " + uch.ShipName;
                 }
             }
         }
