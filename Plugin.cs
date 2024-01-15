@@ -16,7 +16,7 @@ using Pixelfactor.IP.Engine.Sandbox;
 
 namespace SrPhantm {
 
-    [BepInPlugin("com.srphantm.IP.tools", "SrPhantm's IP tools", "1.1.0.0")]
+    [BepInPlugin("com.srphantm.IP.tools", "SrPhantm's IP tools", "1.1.3.0")]
     public class Tools : BaseUnityPlugin {
         ConfigEntry<bool> configRenamer; 
         ConfigEntry<bool> configSandboxSettingsOverrides;
