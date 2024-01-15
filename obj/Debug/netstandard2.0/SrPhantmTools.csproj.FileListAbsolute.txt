@@ -1,0 +1,6 @@
+C:\Users\carde\OneDrive\Documents\Projects\IP2 Modding\SrPhantmTools\obj\Debug\netstandard2.0\SrPhantmTools.csproj.AssemblyReference.cache
+C:\Users\carde\OneDrive\Documents\Projects\IP2 Modding\SrPhantmTools\obj\Debug\netstandard2.0\PluginInfo.cs
+C:\Users\carde\OneDrive\Documents\Projects\IP2 Modding\SrPhantmTools\obj\Debug\netstandard2.0\SrPhantmTools.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\carde\OneDrive\Documents\Projects\IP2 Modding\SrPhantmTools\obj\Debug\netstandard2.0\SrPhantmTools.AssemblyInfoInputs.cache
+C:\Users\carde\OneDrive\Documents\Projects\IP2 Modding\SrPhantmTools\obj\Debug\netstandard2.0\SrPhantmTools.AssemblyInfo.cs
+C:\Users\carde\OneDrive\Documents\Projects\IP2 Modding\SrPhantmTools\obj\Debug\netstandard2.0\SrPhantmTools.csproj.CoreCompileInputs.cache
