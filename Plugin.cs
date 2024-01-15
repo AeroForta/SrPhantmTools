@@ -1,37 +1,70 @@
-﻿using HarmonyLib;
-using BepInEx;
-using BepInEx.Configuration;
-using UnityEngine;
-using Pixelfactor.IP.Engine;
-using Pixelfactor.IP.Engine.Factions;
-using Pixelfactor.IP.Engine.WorldGeneration;
-using System.Collections.Generic;
+﻿using UnityEngine;
+using HarmonyLib;
+
+using System.Collections;
 using System.Linq;
 using System.Reflection.Emit;
 
-namespace SrPhantm {
-    [BepInPlugin("com.srphantm.IP.tools", "SrPhantm's IP tools", "1.1.0.0")]
+using BepInEx;
+using BepInEx.Configuration;
+using BepInEx.Logging;
 
-    public class Renamer : BaseUnityPlugin {
+using Pixelfactor.IP.Engine;
+using Pixelfactor.IP.Engine.Factions;
+using Pixelfactor.IP.Engine.WorldGeneration;
+
+namespace SrPhantm {
+
+    [BepInPlugin("com.srphantm.IP.tools", "SrPhantm's IP tools", "1.1.0.0")]
+    public class Tools : BaseUnityPlugin {
         private ConfigEntry<bool> configAutorun; 
         private ConfigEntry<float> configAutorunDelay;
-        private float nextRun = 0.0f;
+        private ConfigEntry<bool> configApplyPatches;
+        private ConfigEntry<int> configInitDelay;
 
         public void Awake() {
+            configInitDelay = Config.Bind("Base", "InitDelay", 5, "How long to delay before setting up Objects.");
             configAutorun = Config.Bind("Renamer", "Autorun", true, "Enable/Disable autorunning renamer.");
             configAutorunDelay = Config.Bind("Renamer", "Delay", 10.0f, "Time between runs in seconds.");
+            configApplyPatches = Config.Bind("Patcher", "Patch", true, "Enable/Disable the game patcher.");
             Logger.LogInfo("Loaded configuration");
 
-            Harmony.DEBUG = true;
-            var harmony = new Harmony("com.srphantm.IP.tools.patches");
-            harmony.PatchAll();
-            Logger.LogInfo("Patches applied");
+            if (configApplyPatches.Value == true) {
+                HarmonyPatcher.Patch(Logger);
+            }
+            StartCoroutine(DelayedInit());
+        }
+
+        IEnumerator DelayedInit() {
+            yield return new WaitForSeconds(configInitDelay.Value);
+
+            GameObject hostObj = Instantiate(new GameObject("SrPhantm-Tools"));
+            DontDestroyOnLoad(hostObj);
+            Renamer renamer = hostObj.AddComponent<Renamer>();
+            renamer.Init(Logger, configAutorun, configAutorunDelay);
+            Logger.LogInfo("Object injected successfully");
+            Destroy(this);
+        }
+    }
+
+    class Renamer : MonoBehaviour {
+        public ManualLogSource logger;
+        public ConfigEntry<bool> configAutorun;
+        public ConfigEntry<float> configAutorunDelay;
+        public float nextRun = 0.0f;
+
+        public void Init(ManualLogSource a_logger, ConfigEntry<bool> a_configAutorun, ConfigEntry<float> a_configAutorunDelay) {
+            logger = a_logger;
+            configAutorun = a_configAutorun;
+            configAutorunDelay = a_configAutorunDelay;
         }
 
         public void Update() {
             if (configAutorun.Value && Time.time > nextRun) {
                 NameAll();
                 nextRun = Time.time + configAutorunDelay.Value;
+            } else if (!configAutorun.Value) {
+                Destroy(this);
             }
         }
 
@@ -39,7 +72,7 @@ namespace SrPhantm {
             NameAllFactionGOs();
             NameAllSectorGOs();
             NameAllUnitGOs();
-            Logger.LogInfo("Updated names");
+            logger.LogInfo("Updated names");
         }
 
         public void NameAllFactionGOs() {
@@ -68,11 +101,20 @@ namespace SrPhantm {
         }
     }
 
+    class HarmonyPatcher {
+        public static void Patch(ManualLogSource logger) {
+            Harmony.DEBUG = true;
+            var harmony = new Harmony("com.srphantm.IP.tools.patches");
+            harmony.PatchAll();
+            logger.LogInfo("Patches applied");
+        }
+    }
+
     [HarmonyPatch(typeof(WorldBlueprintSectorGenerator))]
     [HarmonyPatch(nameof(WorldBlueprintSectorGenerator.Generate))]
     class WorldBlueprintSectorGenerator_Patch {
-        static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions){
-            var codes = new List<CodeInstruction>(instructions);
+        static System.Collections.Generic.IEnumerable<CodeInstruction> Transpiler(System.Collections.Generic.IEnumerable<CodeInstruction> instructions) {
+            var codes = new System.Collections.Generic.List<CodeInstruction>(instructions);
             bool setNext = false;
             for (var i = 0; i < codes.Count; i++) {
                 var strOperand = codes[i].operand as string;
