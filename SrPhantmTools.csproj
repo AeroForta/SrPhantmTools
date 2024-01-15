@@ -13,6 +13,7 @@
     <Reference Include="netstandard" />
     <Reference Include="UnityEngine" />
     <Reference Include="Pixelfactor.IP" />
+    <Reference Include="0Harmony"/>
   </ItemGroup>
 
 
