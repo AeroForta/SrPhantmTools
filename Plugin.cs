@@ -12,21 +12,24 @@ using BepInEx.Logging;
 using Pixelfactor.IP.Engine;
 using Pixelfactor.IP.Engine.Factions;
 using Pixelfactor.IP.Engine.WorldGeneration;
+using Pixelfactor.IP.Engine.Sandbox;
 
 namespace SrPhantm {
 
     [BepInPlugin("com.srphantm.IP.tools", "SrPhantm's IP tools", "1.1.0.0")]
     public class Tools : BaseUnityPlugin {
-        private ConfigEntry<bool> configAutorun; 
-        private ConfigEntry<float> configAutorunDelay;
-        private ConfigEntry<bool> configApplyPatches;
-        private ConfigEntry<int> configInitDelay;
+        ConfigEntry<bool> configRenamer; 
+        ConfigEntry<bool> configSandboxSettingsOverrides;
+        ConfigEntry<float> configAutorunDelay;
+        ConfigEntry<bool> configApplyPatches;
+        ConfigEntry<int> configInitDelay;
 
         public void Awake() {
-            configInitDelay = Config.Bind("Base", "InitDelay", 5, "How long to delay before setting up Objects.");
-            configAutorun = Config.Bind("Renamer", "Autorun", true, "Enable/Disable autorunning renamer.");
-            configAutorunDelay = Config.Bind("Renamer", "Delay", 10.0f, "Time between runs in seconds.");
-            configApplyPatches = Config.Bind("Patcher", "Patch", true, "Enable/Disable the game patcher.");
+            configInitDelay = Config.Bind("Base", "InitDelay", 3, "How long to delay before setting up Objects.");
+            configAutorunDelay = Config.Bind("Base", "Delay", 30.0f, "Time between runs in seconds.");
+            configSandboxSettingsOverrides = Config.Bind("SandBoxSettings", "Enabled", true, "Enable/Disable sandbox settings mods");
+            configRenamer = Config.Bind("Renamer", "Enabled", true, "Enable/Disable GameObject renamer.");
+            configApplyPatches = Config.Bind("Patcher", "Patch", true, "Enable/Disable Harmony patches.");
             Logger.LogInfo("Loaded configuration");
 
             if (configApplyPatches.Value == true) {
@@ -40,30 +43,69 @@ namespace SrPhantm {
 
             GameObject hostObj = Instantiate(new GameObject("SrPhantm-Tools"));
             DontDestroyOnLoad(hostObj);
+
             Renamer renamer = hostObj.AddComponent<Renamer>();
-            renamer.Init(Logger, configAutorun, configAutorunDelay);
+            renamer.Init(Logger, configRenamer, configAutorunDelay);
+
+            SandboxSettingsOverrides sandboxSettingsOverrides = hostObj.AddComponent<SandboxSettingsOverrides>();
+            sandboxSettingsOverrides.Init(Logger, configSandboxSettingsOverrides);
+
             Logger.LogInfo("Object injected successfully");
             Destroy(this);
         }
     }
 
-    class Renamer : MonoBehaviour {
-        public ManualLogSource logger;
-        public ConfigEntry<bool> configAutorun;
-        public ConfigEntry<float> configAutorunDelay;
-        public float nextRun = 0.0f;
+    class SandboxSettingsOverrides : MonoBehaviour {
+        ManualLogSource logger;
+        ConfigEntry<bool> configRun;
 
-        public void Init(ManualLogSource a_logger, ConfigEntry<bool> a_configAutorun, ConfigEntry<float> a_configAutorunDelay) {
+        public void Init(ManualLogSource a_logger, ConfigEntry<bool> a_configRun) {
             logger = a_logger;
-            configAutorun = a_configAutorun;
+            configRun = a_configRun;
+        }
+
+        public void Start() {
+            if(configRun.Value) {
+                GameController gameController = GameObject.FindObjectOfType<GameController>();
+                var sectorCounts = gameController.GameSettings.SandboxSettings.SectorCounts;
+                var s = sectorCounts.AsEnumerable();
+                s = s.Append(new SandboxSectorCount { Name = "Extra Large", MaxCount = 128, MinCount = 128 });
+                s = s.AddItem(new SandboxSectorCount { Name = "Massive", MaxCount = 256, MinCount = 256 });
+                s = s.AddItem(new SandboxSectorCount { Name = "Super Mass.", MaxCount = 512, MinCount = 512 });
+                s = s.AddItem(new SandboxSectorCount { Name = "Hyper Mass.", MaxCount = 1028, MinCount = 1028 });
+                s = s.AddItem(new SandboxSectorCount { Name = "Ultra Mass.", MaxCount = 2048, MinCount = 2048 });
+                s = s.Reverse();
+                s= s.AddItem(new SandboxSectorCount { Name = "Lonely", MaxCount = 1, MinCount = 1 });
+                s = s.Reverse();
+                sectorCounts =  s.Cast<SandboxSectorCount>().ToArray();
+                gameController.GameSettings.SandboxSettings.SectorCounts = sectorCounts;
+                gameController.GameSettings.SandboxSettings.DefaultSectorCount = sectorCounts[3];
+                logger.LogInfo("Updated SandBoxSettings.SectorCounts");
+
+            } else {
+                Destroy(this);
+            }
+            Destroy(this);
+        }
+    }
+
+    class Renamer : MonoBehaviour {
+        ManualLogSource logger;
+        ConfigEntry<bool> configRun;
+        ConfigEntry<float> configAutorunDelay;
+        float nextRun = 0.0f;
+
+        public void Init(ManualLogSource a_logger, ConfigEntry<bool> a_configRun, ConfigEntry<float> a_configAutorunDelay) {
+            logger = a_logger;
+            configRun = a_configRun;
             configAutorunDelay = a_configAutorunDelay;
         }
 
         public void Update() {
-            if (configAutorun.Value && Time.time > nextRun) {
+            if (configRun.Value && Time.time > nextRun) {
                 NameAll();
                 nextRun = Time.time + configAutorunDelay.Value;
-            } else if (!configAutorun.Value) {
+            } else if (!configRun.Value) {
                 Destroy(this);
             }
         }
