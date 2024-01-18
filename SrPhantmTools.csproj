@@ -12,8 +12,10 @@
   <ItemGroup>
     <Reference Include="netstandard" />
     <Reference Include="UnityEngine" />
+    <Reference Include="UnityEngine.UI" />
     <Reference Include="Pixelfactor.IP" />
-    <Reference Include="0Harmony"/>
+    <Reference Include="0Harmony" />
+    <Reference Include="UniverseLib.Mono" />
   </ItemGroup>
 
 

@@ -40,3 +40,4 @@ C:\Users\carde\OneDrive\Documents\Projects\IP2 Modding\SrPhantmTools\bin\Debug\n
 C:\Users\carde\OneDrive\Documents\Projects\IP2 Modding\SrPhantmTools\bin\Debug\net46\UnityEngine.Purchasing.AppleMacosStub.dll
 C:\Users\carde\OneDrive\Documents\Projects\IP2 Modding\SrPhantmTools\bin\Debug\net46\UnityEngine.Purchasing.WinRTStub.dll
 C:\Users\carde\OneDrive\Documents\Projects\IP2 Modding\SrPhantmTools\bin\Debug\net46\Newtonsoft.Json.dll
+C:\Users\carde\OneDrive\Documents\Projects\IP2 Modding\SrPhantmTools\bin\Debug\net46\UniverseLib.Mono.dll
