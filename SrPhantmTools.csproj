@@ -9,6 +9,17 @@
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
+
+  <ItemDefinitionGroup>
+    <PackageReference>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <ProjectReference>
+      <PrivateAssets>all</PrivateAssets>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+
+
   <ItemGroup>
     <Reference Include="netstandard" />
     <Reference Include="UnityEngine" />

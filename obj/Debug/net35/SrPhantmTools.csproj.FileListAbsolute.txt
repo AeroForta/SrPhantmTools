@@ -1,6 +1,0 @@
-C:\Users\carde\OneDrive\Documents\Projects\IP2 Modding\SrPhantmTools\obj\Debug\net35\SrPhantmTools.csproj.AssemblyReference.cache
-C:\Users\carde\OneDrive\Documents\Projects\IP2 Modding\SrPhantmTools\obj\Debug\net35\PluginInfo.cs
-C:\Users\carde\OneDrive\Documents\Projects\IP2 Modding\SrPhantmTools\obj\Debug\net35\SrPhantmTools.GeneratedMSBuildEditorConfig.editorconfig
-C:\Users\carde\OneDrive\Documents\Projects\IP2 Modding\SrPhantmTools\obj\Debug\net35\SrPhantmTools.AssemblyInfoInputs.cache
-C:\Users\carde\OneDrive\Documents\Projects\IP2 Modding\SrPhantmTools\obj\Debug\net35\SrPhantmTools.AssemblyInfo.cs
-C:\Users\carde\OneDrive\Documents\Projects\IP2 Modding\SrPhantmTools\obj\Debug\net35\SrPhantmTools.csproj.CoreCompileInputs.cache

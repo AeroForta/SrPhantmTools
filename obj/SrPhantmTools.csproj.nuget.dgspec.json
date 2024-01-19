@@ -46,10 +46,12 @@
               "version": "[1.*, )"
             },
             "BepInEx.Core": {
+              "suppressParent": "All",
               "target": "Package",
               "version": "[5.*, )"
             },
             "BepInEx.PluginInfoProps": {
+              "suppressParent": "All",
               "target": "Package",
               "version": "[1.*, )"
             },
@@ -60,6 +62,7 @@
             },
             "UnityEngine.Modules": {
               "include": "Compile",
+              "suppressParent": "All",
               "target": "Package",
               "version": "[2022.1.24, )"
             }
