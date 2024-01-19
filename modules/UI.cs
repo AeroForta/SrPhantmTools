@@ -1,6 +1,3 @@
-
-using System.Drawing.Printing;
-using System.Security.Cryptography;
 using BepInEx.Logging;
 using UnityEngine;
 using UnityEngine.UI;
