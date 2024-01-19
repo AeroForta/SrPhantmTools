@@ -6,6 +6,7 @@ using BepInEx.Configuration;
 namespace SrPhantm {
 
     [BepInPlugin("com.srphantm.IP.tools", "SrPhantm's IP tools", "1.2.2.0")]
+    [BepInProcess("Interstellar Pilot 2.exe")]
     public class Tools : BaseUnityPlugin {
         public ConfigEntry<bool> configRenamer; 
         public ConfigEntry<bool> configSandboxSettingsOverrides;
