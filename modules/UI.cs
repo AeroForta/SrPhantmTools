@@ -1,4 +1,5 @@
 using BepInEx.Logging;
+using Pixelfactor.IP.PlayerInput;
 using UnityEngine;
 using UnityEngine.UI;
 using UniverseLib;
@@ -39,12 +40,13 @@ namespace SrPhantm.UI {
         public MyPanel(UIBase owner) : base(owner) {}
         public override string Name => "SrPhantm-Tools";
         public override int MinWidth => 300;
-        public override int MinHeight => 200;
+        public override int MinHeight => 300;
         public override Vector2 DefaultAnchorMin => new(0f, 0f);
         public override Vector2 DefaultAnchorMax => new(0f, 0f);
         Tools rootObj;
         InputFieldRef autorunDelayInput;
         InputFieldRef initDelayInput;
+        InputFieldRef drawDisInput;
 
         protected override void ConstructPanelContent()
         {
@@ -65,6 +67,7 @@ namespace SrPhantm.UI {
             autorunDelayInput.Component.placeholder.GetComponent<Text>().text = rootObj.configAutorunDelay.Value.ToString();
             autorunDelayInputButton.OnClick += OnAutorunDelayChange;
 
+            // Restart required
             Text requiresRestart = UIFactory.CreateLabel(ContentRoot, "requiresRestart", "Options below will not take effect until gave is restarted.");
             UIFactory.SetLayoutElement(requiresRestart.gameObject, minWidth: 100, minHeight: 25);
 
@@ -80,9 +83,18 @@ namespace SrPhantm.UI {
             initDelayInput.Component.placeholder.GetComponent<Text>().text = rootObj.configInitDelay.Value.ToString();
             initDelayInputButton.OnClick += OnInitDelayChange;
 
-            GameObject toggleSandboxMods = CreateToggle(conRoot2, "Sandbox", "Sandbox++", out Toggle sandboxModsToggle);
-            sandboxModsToggle.isOn = rootObj.configSandboxSettingsOverrides.Value;
-            sandboxModsToggle.onValueChanged.AddListener(onSandboxModsToggle);
+            GameObject toggleSandboxMods = CreateToggle(conRoot2, "Sandbox", "Sandbox+", out Toggle sandboxToggle);
+            sandboxToggle.isOn = rootObj.configSandboxSettingsOverrides.Value;
+            sandboxToggle.onValueChanged.AddListener(onSandboxModsToggle);
+
+            GameObject toggleDrawDistance = CreateToggle(conRoot2, "DrawDistance", "Draw Distance", out Toggle drawDistanceToggle);
+            drawDistanceToggle.isOn = rootObj.configEditDrawDistance.Value;
+            drawDistanceToggle.onValueChanged.AddListener(onDrawDistanceToggle);
+
+            drawDisInput = CreateInputField(conRoot2, "DrawDisFar", "Draw Distance", out ButtonRef drawDisButton);
+            drawDisInput.Component.text = rootObj.configDrawDistance.Value.ToString();
+            drawDisInput.Component.placeholder.GetComponent<Text>().text = rootObj.configDrawDistance.Value.ToString();
+            drawDisButton.OnClick += onDrawDisChange;
         }
 
         private static GameObject CreateToggle(GameObject parent, string name, string displayString ,out Toggle toggle) {
@@ -127,6 +139,15 @@ namespace SrPhantm.UI {
         private void OnInitDelayChange() {
             rootObj.configInitDelay.Value = float.Parse(initDelayInput.Component.text);
             initDelayInput.Component.placeholder.GetComponent<Text>().text = rootObj.configInitDelay.Value.ToString();
+        }
+
+        private void onDrawDistanceToggle(bool val) {
+            rootObj.configEditDrawDistance.Value = val;
+        }
+
+        private void onDrawDisChange() {
+            rootObj.configDrawDistance.Value = float.Parse(drawDisInput.Component.text);
+            drawDisInput.Component.placeholder.GetComponent<Text>().text = rootObj.configDrawDistance.ToString();
         }
     }
 }

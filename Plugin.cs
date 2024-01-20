@@ -13,6 +13,8 @@ namespace SrPhantm {
         public ConfigEntry<float> configAutorunDelay;
         public ConfigEntry<bool> configApplyPatches;
         public ConfigEntry<float> configInitDelay;
+        public ConfigEntry<bool> configEditDrawDistance;
+        public ConfigEntry<float> configDrawDistance;
 
         public void Awake() {
             configInitDelay = Config.Bind("Base", "InitDelay", 1.0f, "How long to delay before setting up Objects.");
@@ -20,11 +22,11 @@ namespace SrPhantm {
             configSandboxSettingsOverrides = Config.Bind("SandBoxSettings", "Enabled", true, "Enable/Disable sandbox settings mods");
             configRenamer = Config.Bind("Renamer", "Enabled", true, "Enable/Disable GameObject renamer.");
             configApplyPatches = Config.Bind("Patcher", "Enabled", true, "Enable/Disable Harmony patches.");
+            configEditDrawDistance = Config.Bind("Draw Distance", "Enabled", true, "Enable draw distance changes.");
+            configDrawDistance = Config.Bind("Draw Distance", "Distance", -1f, "Changes draw distance (-1 = Config Disabled)");
             Logger.LogInfo("Loaded configuration");
 
-            if (configApplyPatches.Value == true) {
-                HarmonyPatches.HarmonyPatcher.Patch(Logger);
-            }
+            HarmonyPatches.HarmonyPatcher.Patch(Logger, configApplyPatches);
             StartCoroutine(DelayedInit());
         }
 
@@ -39,6 +41,9 @@ namespace SrPhantm {
 
             SandboxSettingsOverrides sandboxSettingsOverrides = hostObj.AddComponent<SandboxSettingsOverrides>();
             sandboxSettingsOverrides.Init(Logger, configSandboxSettingsOverrides);
+
+            DrawDistance drawDistance = hostObj.AddComponent<DrawDistance>();
+            drawDistance.Init(Logger, configEditDrawDistance, configDrawDistance);
 
             UI.UIManager uiManager = hostObj.AddComponent<UI.UIManager>();
             uiManager.Init(Logger);

@@ -18,7 +18,8 @@ namespace SrPhantm {
         }
 
         public void Update() {
-            if (configRun.Value && Time.time > nextRun) {
+            if (!configRun.Value) {return;}
+            if (Time.time > nextRun) {
                 NameAll();
                 nextRun = Time.time + configAutorunDelay.Value;
             }
